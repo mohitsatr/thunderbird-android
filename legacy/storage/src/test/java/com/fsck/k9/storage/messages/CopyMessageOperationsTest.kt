@@ -40,7 +40,7 @@ class CopyMessageOperationsTest : RobolectricTest() {
             lockableDatabase,
             attachmentFileManager,
             threadMessageOperations,
-            accountId,
+            accountId,,
         )
     }
 

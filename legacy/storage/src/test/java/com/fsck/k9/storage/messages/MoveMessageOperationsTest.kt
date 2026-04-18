@@ -10,6 +10,7 @@ import assertk.assertions.startsWith
 import com.fsck.k9.K9
 import com.fsck.k9.storage.RobolectricTest
 import net.thunderbird.feature.account.AccountIdFactory
+import net.thunderbird.feature.mail.message.list.LocalMessageUidPrefixProvider
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

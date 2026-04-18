@@ -14,6 +14,7 @@ class K9MessageStoreFactory(
     private val storageFilesProviderFactory: StorageFilesProviderFactory,
     private val basicPartInfoExtractor: BasicPartInfoExtractor,
     private val generalSettingsManager: GeneralSettingsManager,
+    private val localMessageUidPrefixProvider: LocalMessageUidPrefixProvider
 ) : MessageStoreFactory {
 
     override fun create(account: LegacyAccountDto): ListenableMessageStore {
@@ -31,6 +32,7 @@ class K9MessageStoreFactory(
             basicPartInfoExtractor,
             generalSettingsManager,
             account.id,
+            localMessageUidPrefixProvider
         )
         val notifierMessageStore = NotifierMessageStore(messageStore, localStore)
         return ListenableMessageStore(notifierMessageStore)
