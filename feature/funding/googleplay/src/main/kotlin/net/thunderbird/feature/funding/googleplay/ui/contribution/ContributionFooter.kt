@@ -25,10 +25,7 @@ import net.thunderbird.feature.funding.googleplay.ui.contribution.purchase.Purch
 import net.thunderbird.feature.funding.googleplay.ui.contribution.purchase.PurchaseSliceContract.Event
 import net.thunderbird.feature.funding.googleplay.ui.contribution.purchase.PurchaseSliceContract.State
 
-@SuppressWarnings(
-    "LongParameterList",
-    "LongMethod",
-)
+@Suppress("LongMethod")
 @Composable
 internal fun ContributionFooter(
     state: State,

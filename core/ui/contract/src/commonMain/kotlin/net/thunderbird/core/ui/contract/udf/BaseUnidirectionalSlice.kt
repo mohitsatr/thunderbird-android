@@ -44,12 +44,6 @@ public abstract class BaseUnidirectionalSlice<STATE, EVENT, EFFECT>(
         _state.update(update)
     }
 
-    protected fun updateStateAsync(update: (STATE) -> STATE) {
-        scope.launch {
-            _state.update(update)
-        }
-    }
-
     /**
      * Emits a side effect.
      *

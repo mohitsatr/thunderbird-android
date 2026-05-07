@@ -1,6 +1,7 @@
 package net.thunderbird.feature.funding.googleplay.data.remote.bilingclient
 
 import android.app.Activity
+import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.ProductType
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.BillingFlowParams.ProductDetailsParams
@@ -177,11 +178,11 @@ internal class BillingClient(
         productType: String,
         productIds: List<String>,
     ) {
-        val missingProductIds = productIds.filter { !productCache.hasKey(ContributionId(it)) }
+        val missingProductIds = productIds.filterNot { productCache.hasKey(ContributionId(it)) }
         if (missingProductIds.isNotEmpty()) {
             val result = queryProducts(productType, missingProductIds)
             if (result.billingResult.responseCode ==
-                com.android.billingclient.api.BillingClient.BillingResponseCode.OK
+                BillingClient.BillingResponseCode.OK
             ) {
                 result.productDetailsList.orEmpty().forEach { productDetails ->
                     productCache[ContributionId(productDetails.productId)] = productDetails

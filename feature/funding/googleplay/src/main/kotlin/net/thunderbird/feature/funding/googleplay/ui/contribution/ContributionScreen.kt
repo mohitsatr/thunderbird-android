@@ -3,14 +3,11 @@ package net.thunderbird.feature.funding.googleplay.ui.contribution
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.k9mail.core.ui.compose.designsystem.organism.TopAppBarWithBackButton
 import app.k9mail.core.ui.compose.designsystem.template.Scaffold
@@ -51,8 +48,10 @@ internal fun ContributionScreen(
         onBack()
     }
 
-    OnResume {
+    LifecycleResumeEffect(viewModel) {
         viewModel.event(Event.Purchase(PurchaseEvent.RefreshPurchase))
+
+        onPauseOrDispose { }
     }
 
     Scaffold(
@@ -87,25 +86,4 @@ private fun getManageSubscriptionIntent(
         .build()
 
     return Intent(Intent.ACTION_VIEW, uri)
-}
-
-@Composable
-fun OnResume(
-    onResume: () -> Unit,
-) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    DisposableEffect(lifecycleOwner, onResume) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                onResume()
-            }
-        }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
 }
