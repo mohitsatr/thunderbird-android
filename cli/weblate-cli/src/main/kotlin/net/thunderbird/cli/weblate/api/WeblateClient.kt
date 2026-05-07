@@ -21,6 +21,7 @@ import io.ktor.http.headers
 import io.ktor.serialization.kotlinx.json.json
 import java.io.File
 import kotlinx.coroutines.runBlocking
+import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
 
 class WeblateClient(
@@ -32,12 +33,9 @@ class WeblateClient(
 
     fun loadComponents(): List<Component> {
         if (config.cacheEnabled) {
-            try {
-                val cached = readComponentsFromCache()
-                if (cached.isNotEmpty()) {
-                    return cached
-                }
-            } catch (_: Exception) {
+            val cached = readComponentsFromCache()
+            if (cached.isNotEmpty()) {
+                return cached
             }
         }
 
@@ -54,10 +52,7 @@ class WeblateClient(
         }
 
         if (config.cacheEnabled) {
-            try {
-                writeComponentsToCache(components)
-            } catch (_: Exception) {
-            }
+            writeComponentsToCache(components)
         }
 
         return components
@@ -109,9 +104,13 @@ class WeblateClient(
     }
 
     private fun readComponentsFromCache(): List<Component> {
-        val cacheFile = File(CACHE_FILE_PATH)
-        if (cacheFile.exists()) {
-            return json.decodeFromString<List<Component>>(cacheFile.readText())
+        try {
+            val cacheFile = File(CACHE_FILE_PATH)
+            if (cacheFile.exists()) {
+                return json.decodeFromString<List<Component>>(cacheFile.readText())
+            }
+        } catch (e: IOException) {
+            println("Failed to read cache file: ${e.message}")
         }
         return emptyList()
     }
@@ -119,9 +118,13 @@ class WeblateClient(
     private fun writeComponentsToCache(components: List<Component>) {
         if (components.isEmpty()) return
 
-        val cacheFile = File(CACHE_FILE_PATH)
-        cacheFile.parentFile.mkdirs()
-        cacheFile.writeText(json.encodeToString(components))
+        try {
+            val cacheFile = File(CACHE_FILE_PATH)
+            cacheFile.parentFile.mkdirs()
+            cacheFile.writeText(json.encodeToString(components))
+        } catch (e: IOException) {
+            println("Failed to write cache file: ${e.message}")
+        }
     }
 
     private companion object {
