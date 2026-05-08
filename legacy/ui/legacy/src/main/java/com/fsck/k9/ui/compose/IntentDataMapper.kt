@@ -38,8 +38,10 @@ class IntentDataMapper {
                 intentType = intent.type,
                 subject = intent.getStringExtra(Intent.EXTRA_SUBJECT),
                 shouldInitFromSendOrViewIntent = true,
+                extraEmail = intent.getStringArrayExtra(Intent.EXTRA_EMAIL)?.toList()
+                    ?: intent.getStringExtra(Intent.EXTRA_EMAIL)?.let { listOf(it) }
+                    ?: emptyList(),
             )
-
             val extraStreams = when (action) {
                 Intent.ACTION_SEND -> {
                     IntentCompat.getParcelableExtra(
@@ -80,6 +82,7 @@ data class IntentData(
     val extraText: CharSequence? = null,
     val intentType: String? = null,
     val extraStream: List<Uri> = emptyList(),
+    val extraEmail: List<String> = emptyList(),
     val subject: String? = null,
     val trustId: String? = null,
 )

@@ -2,6 +2,9 @@ package com.fsck.k9.message
 
 import android.content.Intent
 import android.net.Uri
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.isEmpty
 import com.fsck.k9.K9RobolectricTest
 import com.fsck.k9.activity.MessageCompose
 import com.fsck.k9.ui.compose.IntentData
@@ -56,6 +59,24 @@ class IntentDataMapperTest : K9RobolectricTest() {
         assertEquals(listOf(streamUri), result.extraStream)
         assertTrue(result.startedByExternalIntent)
         assertTrue(result.shouldInitFromSendOrViewIntent)
+    }
+
+    @Test
+    fun `initFromIntent should extract extra mail address from ACTION_SEND`() {
+        val extraAddress = "test@de.com"
+        val intentWithExtraAddress = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_EMAIL, extraAddress)
+        }
+        val intentWithoutExtraAddress = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+        }
+
+        val result1 = intentDataMapper.initFromIntent(intentWithExtraAddress)
+        val result2 = intentDataMapper.initFromIntent(intentWithoutExtraAddress)
+
+        assertThat(result1.extraEmail).containsExactly(extraAddress)
+        assertThat(result2.extraEmail).isEmpty()
     }
 
     @Test
