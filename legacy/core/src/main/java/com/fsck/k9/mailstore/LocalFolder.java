@@ -66,8 +66,7 @@ public class LocalFolder {
     private final LocalStore localStore;
     private final AttachmentInfoExtractor attachmentInfoExtractor;
     private GeneralSettingsManager generalSettingsManager;
-    private final LocalMessageUidPrefixProvider localMessageUidPrefixProvider =
-        DI.get(LocalMessageUidPrefixProvider.class);
+    private LocalMessageUidPrefixProvider localMessageUidPrefixProvider;
 
     private String status = null;
     private long lastChecked = 0;
@@ -88,21 +87,25 @@ public class LocalFolder {
     private boolean localOnly = false;
 
 
-    public LocalFolder(LocalStore localStore, String serverId, GeneralSettingsManager generalSettingsManager) {
-        this(localStore, serverId, null, generalSettingsManager);
+    public LocalFolder(LocalStore localStore, String serverId, GeneralSettingsManager generalSettingsManager,
+        LocalMessageUidPrefixProvider localMessageUidPrefixProvider) {
+        this(localStore, serverId, null, generalSettingsManager, localMessageUidPrefixProvider);
     }
 
-    public LocalFolder(LocalStore localStore, String serverId, String name, GeneralSettingsManager generalSettingsManager) {
-        this(localStore, serverId, name, FolderType.REGULAR, generalSettingsManager);
+    public LocalFolder(LocalStore localStore, String serverId, String name, GeneralSettingsManager generalSettingsManager,
+        LocalMessageUidPrefixProvider localMessageUidPrefixProvider) {
+        this(localStore, serverId, name, FolderType.REGULAR, generalSettingsManager, localMessageUidPrefixProvider);
     }
 
-    public LocalFolder(LocalStore localStore, String serverId, String name, FolderType type, GeneralSettingsManager generalSettingsManager) {
+    public LocalFolder(LocalStore localStore, String serverId, String name, FolderType type, GeneralSettingsManager generalSettingsManager,
+        LocalMessageUidPrefixProvider localMessageUidPrefixProvider) {
         this.localStore = localStore;
         this.serverId = serverId;
         this.name = name;
         this.type = type;
         this.generalSettingsManager = generalSettingsManager;
         attachmentInfoExtractor = localStore.getAttachmentInfoExtractor();
+        this.localMessageUidPrefixProvider = localMessageUidPrefixProvider;
     }
 
     public LocalFolder(LocalStore localStore, long databaseId, GeneralSettingsManager generalSettingsManager) {
